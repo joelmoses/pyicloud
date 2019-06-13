@@ -13,7 +13,7 @@ from re import match
 from pyicloud.exceptions import (
     PyiCloudFailedLoginException,
     PyiCloudAPIResponseError,
-    PyiCloud2SARequiredError,
+    PyiCloud2FARequiredError,
     PyiCloudServiceNotActivatedErrror
 )
 from pyicloud.services import (
@@ -103,9 +103,9 @@ class PyiCloudSession(requests.Session):
         return response
 
     def _raise_error(self, code, reason):
-        if self.service.requires_2sa and \
+        if self.service.requires_2fa and \
                 reason == 'Missing X-APPLE-WEBAUTH-TOKEN cookie':
-            raise PyiCloud2SARequiredError(response.url)
+            raise PyiCloud2FARequiredError(response.url)
         if code == 'ZONE_NOT_FOUND' or code == 'AUTHENTICATION_FAILED':
             reason = 'Please log into https://icloud.com/ to manually ' \
                 'finish setting up your iCloud service'
@@ -253,7 +253,7 @@ class PyiCloudService(object):
         )
 
     @property
-    def requires_2sa(self):
+    def requires_2fa(self):
         """ Returns True if two-step authentication is required."""
         return self.data.get('hsaChallengeRequired', False) \
             and self.data['dsInfo'].get('hsaVersion', 0) >= 1
@@ -302,7 +302,7 @@ class PyiCloudService(object):
         # ensure that we save the X-APPLE-WEBAUTH-HSA-TRUST cookie.
         self.authenticate()
 
-        return not self.requires_2sa
+        return not self.requires_2fa
 
     @property
     def devices(self):
