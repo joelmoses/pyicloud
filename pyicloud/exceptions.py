@@ -22,10 +22,10 @@ class PyiCloudFailedLoginException(PyiCloudException):
     pass
 
 
-class PyiCloud2SARequiredError(PyiCloudException):
+class PyiCloud2FARequiredError(PyiCloudException):
     def __init__(self, url):
         message = "Two-step authentication required for %s" % url
-        super(PyiCloud2SARequiredError, self).__init__(message)
+        super(PyiCloud2FARequiredError, self).__init__(message)
 
 
 class PyiCloudNoDevicesException(Exception):
@@ -35,6 +35,11 @@ class PyiCloudNoDevicesException(Exception):
 class NoStoredPasswordAvailable(PyiCloudException):
     pass
 
+class PyiCloudBinaryFeedParseError(Exception):
+    pass
+
+class PyiCloudPhotoLibraryNotActivatedErrror(Exception):
+     pass
 
 class PyiCloudServiceNotActivatedErrror(PyiCloudAPIResponseError):
     pass
